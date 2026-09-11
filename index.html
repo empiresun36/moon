@@ -128,7 +128,7 @@
 /* 新增：讚助文字高亮效果 */
 .info-card .highlight {
   color: #ff4d4d; /* 鮮艷的粉紅色，或可改用 #ff4d4d (紅)、#ffc107 (亮黃) */
-  font-weight: bold;
+
 font-size: 16px;
   background: rgba(255, 51, 102, 0.15); /* 淡淡的底色背景 */
   padding: 2px 6px;
@@ -373,6 +373,8 @@ font-size: 16px;
       <div class="info-section">
        <strong>📅 時間： 9/19 (六) 18:00 ~ 21:00</strong>
        <strong>📍 地點： 花園前廣場</strong>
+ 
+
       </div>
       <div class="info-section">
        <strong>📋 活動內容：</strong>
@@ -382,12 +384,16 @@ font-size: 16px;
         <p>提供油飯、米粉、串烤、Pizza 等豐盛美食，並安排剝柚子、喝啤酒比賽及中秋摸彩活動，歡迎大家一起來同樂！</p>
       </div>
       <div class="info-section" style="padding-left: 20px;">
-        <strong>🍱 1人帶1份餐食 - 住戶美食共享</strong>
-        <p>歡迎大家攜帶各式美食共襄盛舉！無論是炸雞、Pizza、柚子、月餅、飲料或餅乾等，都歡迎帶來與鄰居分享，吃美食、聊聊天，歡度中秋佳節。</p>
+        <strong>🍱【鄰居美食派對】 - 住戶美食共享</strong>
+        <p>歡迎大家隨手帶點喜歡的美食（如炸雞、Pizza、月餅、柚子、手作料理或零食飲料）來與鄰居分享，一起聊天過中秋！</p>
+        <p><span class="highlight">【溫馨提醒】 自由攜帶，毫無負擔！就算只帶一顆愛吃的心來湊熱鬧也完全沒問題！</span></p>
       </div>
       <div class="info-section" style="padding-left: 20px;">
-        <strong>🤝 住戶共同自行舉辦，歡迎熱心贊助</strong>
+        <strong>🤝 住戶共同自行舉辦，歡迎熱情參與、隨喜贊助</strong>
         <p>本次中秋晚會由住戶共同自行舉辦，誠摯邀請大家一起支持。無論是<span class="highlight">活動經費</span>或<span class="highlight">摸彩禮品</span>，皆歡迎<span class="highlight">熱情贊助</span>，讓今年的中秋晚會更加豐富熱鬧！</p>
+      </div>
+      <div class="info-section" style="padding-left: 20px;">
+        <strong><span class="highlight"> 👉【環保小尖兵】活動現場，請記得自帶「環保碗筷、杯子」！！</span></strong>
       </div>
     </div>
 
@@ -413,16 +419,9 @@ font-size: 16px;
         <input type="text" id="userName" name="entry.1330276673" placeholder="請輸入聯絡人姓名" required>
       </div>
 
-      <!-- 3. 電話 -->
+      <!-- 3. 參加人數 -->
       <div class="form-group">
-        <label for="userPhone">3. 電話 <span>*</span></label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="tel" id="userPhone" name="entry.711885050" placeholder="例如：0912345678" required>
-      </div>
-
-      <!-- 4. 參加人數 -->
-      <div class="form-group">
-        <label for="peopleCount">4. 參加人數 <span>*</span></label>
+        <label for="peopleCount">3. 參加人數 <span>*</span></label>
         <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
         <div class="select-wrapper">
           <select id="peopleCount" name="entry.1798518669" required>
@@ -439,28 +438,6 @@ font-size: 16px;
           </select>
         </div>
         <div class="hint">每戶報名人數上限最多為 9 位</div>
-      </div>
-
-      <!-- 5. 有否贊助活動經費或摸彩禮品 -->
-      <div class="form-group">
-        <label for="sponsorship">5. 有否贊助活動經費或摸彩禮品</label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <div class="select-wrapper">
-          <select id="sponsorship" name="entry.1290141302" onchange="toggleSponsorshipDetails()">
-            <option value="否" selected>否</option>
-            <option value="贊助活動經費">贊助活動經費</option>
-            <option value="贊助摸彩禮品">贊助摸彩禮品</option>
-            <option value="贊助活動經費及摸彩禮品">贊助活動經費及摸彩禮品</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 6. 贊助內容說明（動態顯示） -->
-      <div class="form-group" id="sponsorshipDetailsGroup">
-        <label for="sponsorshipDetails">6. 贊助內容說明 <span>*</span></label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="text" id="sponsorshipDetails" name="entry.120037457" placeholder="請填寫贊助金額、品項或數量（例如：現金 2,000 元 或 高級禮盒 2 份）">
-        <div class="hint">感謝您的熱心支持！管理委員會將另行致謝與聯繫登記</div>
       </div>
 
       <button type="submit" class="btn-submit">確認報名 🥮</button>
