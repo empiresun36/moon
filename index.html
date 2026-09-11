@@ -7,11 +7,12 @@
   <!-- 導入 Three.js 3D 引擎與 OrbitControls 軌道控制器 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style>
     :root {
       --gold-accent: #ffd700;
       --text-gold: #ffe082;
-      --card-bg: rgba(10, 18, 42, 0.75);
+      --card-bg: rgba(10, 18, 42, 0.78);
     }
 
     * {
@@ -41,7 +42,34 @@
       width: 100vw;
       height: 100vh;
       z-index: 0;
-      pointer-events: auto; /* 允許用戶用滑鼠拖拽旋轉 3D 月球 */
+    }
+
+    /* 點擊月球出現的許願/節慶祝福浮動文字 */
+    .moon-blessing {
+      position: fixed;
+      color: #fff7d6;
+      font-weight: bold;
+      font-size: 18px;
+      pointer-events: none;
+      text-shadow: 0 0 10px #ffd700, 0 0 20px #ff9800;
+      animation: floatUp 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -150%) scale(1);
+      }
     }
 
     /* 報名卡片表單 */
@@ -81,7 +109,7 @@
 
     .header p {
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.85);
       margin-top: 8px;
     }
 
@@ -121,7 +149,7 @@
     }
 
     input[type="text"],
-    input[type="number"] {
+    select {
       width: 100%;
       padding: 14px 16px;
       background: rgba(255, 255, 255, 0.08);
@@ -130,6 +158,30 @@
       font-size: 16px;
       color: #fff;
       transition: all 0.3s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    /* 下拉選單自訂箭頭 */
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: '▼';
+      font-size: 12px;
+      color: var(--gold-accent);
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    select option {
+      background-color: #0d1630;
+      color: #fff;
     }
 
     input::placeholder {
@@ -137,7 +189,7 @@
     }
 
     input[type="text"]:focus,
-    input[type="number"]:focus {
+    select:focus {
       border-color: var(--gold-accent);
       background: rgba(255, 255, 255, 0.15);
       box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
@@ -267,7 +319,7 @@
     <div class="header">
       <h1>太陽帝國 - 115年</h1>
       <h2>中秋晚會線上報名</h2>
-      <p>🌕 花好月圓人團圓，可旋轉背景 3D 月球 🏮</p>
+      <p>🌕 點擊 3D 月亮可觸發金色光脈衝與中秋許願祝福 🥮</p>
     </div>
 
     <div class="info-card">
@@ -287,14 +339,27 @@
         <label for="household">1. 戶號 <span>*</span></label>
         <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
         <input type="text" id="household" name="entry.1330276673" placeholder="例如：B3-36F" required>
-        <div class="hint">請輸入您的戶號</div>
+        <div class="hint">請輸入您的棟別與樓層（例如：B3-36F）</div>
       </div>
 
       <div class="form-group">
         <label for="peopleCount">2. 參加人數 <span>*</span></label>
         <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="number" id="peopleCount" name="entry.1798518669" min="1" max="1" placeholder="請輸入參加總人數" required>
-        <div class="hint">以方便管委會統計晚會食材數量</div>
+        <div class="select-wrapper">
+          <select id="peopleCount" name="entry.1798518669" required>
+            <option value="" disabled selected>請選擇參加人數</option>
+            <option value="1">1 位</option>
+            <option value="2">2 位</option>
+            <option value="3">3 位</option>
+            <option value="4">4 位</option>
+            <option value="5">5 位</option>
+            <option value="6">6 位</option>
+            <option value="7">7 位</option>
+            <option value="8">8 位</option>
+            <option value="9">9 位</option>
+          </select>
+        </div>
+        <div class="hint">每戶報名人數上限最多為 9 位</div>
       </div>
 
       <button type="submit" class="btn-submit">確認報名 🥮</button>
@@ -313,30 +378,45 @@
     </div>
   </div>
 
-  <!-- Three.js 3D 月亮製作邏輯 -->
+  <!-- Three.js 3D 月亮與互動點擊邏輯 -->
   <script>
-    let scene, camera, renderer, moon, stars;
+    let scene, camera, renderer, moon, stars, shockwave, raycaster, mouse;
+    let shockwaveActive = false;
+    let shockwaveScale = 1;
+
+    // 點擊月亮出現的中秋祝福句庫
+    const blessings = [
+      "🌕 花好月圓 人團圓！",
+      "🥮 預祝中秋大吉 大利！",
+      "✨ 太陽帝國 幸福連連！",
+      "🐇 玉兔迎春 月圓心舒！",
+      "🎉 期待 9/19 摸彩中大獎！",
+      "🍻 晚會歡聚 快樂無限！",
+      "🏮 歲月靜好 中秋安康！"
+    ];
 
     function init3DMoon() {
       const container = document.getElementById('canvas-container');
 
-      // 1. 建立場景 (Scene)
+      // 1. 建立場景
       scene = new THREE.Scene();
 
-      // 2. 建立相機 (Camera)
+      // 2. 建立相機
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 0, 7);
 
-      // 3. 建立渲染器 (Renderer)
+      // 3. 建立渲染器
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      // 4. 建立 3D 月球幾何體與紋理貼圖
-      const geometry = new THREE.SphereGeometry(1.8, 64, 64);
+      // 4. Raycaster 光線投射器（用於檢測點擊 3D 月球）
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
 
-      // 使用 NASA 官方授權高清月球紋理 Map
+      // 5. 建立 3D 月球
+      const geometry = new THREE.SphereGeometry(1.8, 64, 64);
       const textureLoader = new THREE.TextureLoader();
       const moonTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg');
 
@@ -344,23 +424,34 @@
         map: moonTexture,
         roughness: 0.8,
         metalness: 0.1,
-        color: 0xffe89e // 賦予月亮金黃色的節慶溫暖光澤
+        color: 0xffe89e
       });
 
       moon = new THREE.Mesh(geometry, material);
-      // 將月球向右上偏移，避免完全被中央表單遮擋
       moon.position.set(2.2, 1.2, -1);
       scene.add(moon);
 
-      // 5. 燈光系統 (Ambient & Directional Light)
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+      // 6. 點擊產生的金黃光脈衝圈 (Shockwave Ring)
+      const shockGeometry = new THREE.RingGeometry(1.8, 1.95, 64);
+      const shockMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffd700,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0
+      });
+      shockwave = new THREE.Mesh(shockGeometry, shockMaterial);
+      shockwave.position.copy(moon.position);
+      scene.add(shockwave);
+
+      // 7. 燈光系統
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
       scene.add(ambientLight);
 
       const moonLight = new THREE.DirectionalLight(0xfff5cc, 1.5);
       moonLight.position.set(5, 3, 5);
       scene.add(moonLight);
 
-      // 6. 星空背景粒子 (Particle Stars)
+      // 8. 星空背景粒子
       const starsGeometry = new THREE.BufferGeometry();
       const starsCount = 800;
       const starPositions = new Float32Array(starsCount * 3);
@@ -380,17 +471,61 @@
       stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
 
-      // 7. 軌道控制器 (可用滑鼠/手指旋轉)
+      // 9. 控制器
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
-      controls.enableZoom = false; // 停用縮放以防干擾網頁滑動
+      controls.enableZoom = false;
 
-      // 8. 視窗 Resizing 響應
+      // 10. 事件監聽 (點擊 & 響應式尺寸)
       window.addEventListener('resize', onWindowResize);
+      window.addEventListener('pointerdown', onDocumentPointerDown);
 
-      // 9. 開始渲染動畫循環
       animate();
+    }
+
+    // 觸發點擊月球效果
+    function onDocumentPointerDown(event) {
+      // 避開表單區域的點擊，確保專注於 Canvas 與月球
+      if (event.target.closest('.container') || event.target.closest('.modal-box')) return;
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(moon);
+
+      if (intersects.length > 0) {
+        // 1. 觸發月球心跳縮放彈跳
+        moon.scale.set(1.18, 1.18, 1.18);
+        
+        // 2. 啟動光波脈衝
+        shockwave.position.copy(moon.position);
+        shockwave.rotation.x = Math.random() * Math.PI;
+        shockwave.rotation.y = Math.random() * Math.PI;
+        shockwaveScale = 1;
+        shockwave.scale.set(1, 1, 1);
+        shockwave.material.opacity = 0.9;
+        shockwaveActive = true;
+
+        // 3. 產生隨機許願/祝福飄浮文字
+        createBlessingText(event.clientX, event.clientY);
+      }
+    }
+
+    function createBlessingText(x, y) {
+      const el = document.createElement('div');
+      el.className = 'moon-blessing';
+      const randomText = blessings[Math.floor(Math.random() * blessings.length)];
+      el.innerText = randomText;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+
+      document.body.appendChild(el);
+
+      setTimeout(() => {
+        el.remove();
+      }, 1800);
     }
 
     function animate() {
@@ -399,9 +534,22 @@
       // 月球自轉
       if (moon) {
         moon.rotation.y += 0.002;
+        // 月球平滑恢復原尺寸
+        moon.scale.lerp(new THREE.Vector3(1, 1, 1), 0.08);
       }
 
-      // 星空微旋轉
+      // 金色光波脈衝擴散動畫
+      if (shockwaveActive && shockwave) {
+        shockwaveScale += 0.04;
+        shockwave.scale.set(shockwaveScale, shockwaveScale, shockwaveScale);
+        shockwave.material.opacity -= 0.025;
+
+        if (shockwave.material.opacity <= 0) {
+          shockwaveActive = false;
+        }
+      }
+
+      // 星空旋轉
       if (stars) {
         stars.rotation.y += 0.0005;
       }
@@ -414,7 +562,6 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      // 手機板螢幕時調整月球位置
       if (window.innerWidth < 768) {
         moon.position.set(0, 1.8, -2);
       } else {
@@ -422,10 +569,9 @@
       }
     }
 
-    // 初始化 3D 場景
     init3DMoon();
 
-    // 表單提交處理邏輯
+    // 表單提交邏輯
     let submitted = false;
 
     function handleFormSubmit() {
