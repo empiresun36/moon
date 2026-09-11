@@ -671,10 +671,9 @@ font-size: 16px;
     function handleFormSubmit() {
       const household = document.getElementById('household').value.trim();
       const userName = document.getElementById('userName').value.trim();
-      const userPhone = document.getElementById('userPhone').value.trim();
       const peopleCount = document.getElementById('peopleCount').value;
 
-      if (!household || !userName || !userPhone || !peopleCount) {
+      if (!household || !userName || !peopleCount) {
         return false;
       }
 
