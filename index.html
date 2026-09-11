@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>太陽帝國 - 115年中秋晚會線上報名</title>
+  <title>115年太陽帝國 - 住戶自辦中秋晚會線上報名</title>
   <!-- 導入 Three.js 3D 引擎與 OrbitControls 軌道控制器 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -81,11 +81,12 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8),
                   0 0 40px rgba(255, 215, 0, 0.25);
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       overflow: hidden;
       border: 1px solid rgba(255, 215, 0, 0.4);
       position: relative;
       z-index: 1;
+      margin: 20px 0;
     }
 
     .header {
@@ -118,14 +119,30 @@
       background: rgba(255, 215, 0, 0.08);
       border: 1px solid rgba(255, 215, 0, 0.25);
       border-radius: 12px;
-      padding: 15px;
+      padding: 16px 18px;
       margin: 10px 20px 0 20px;
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.6;
+    }
+
+    .info-section {
+      margin-bottom: 12px;
+    }
+
+    .info-section:last-child {
+      margin-bottom: 0;
     }
 
     .info-card strong {
       color: var(--text-gold);
+      font-size: 15px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .info-card p {
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
     }
 
     form {
@@ -149,6 +166,7 @@
     }
 
     input[type="text"],
+    input[type="tel"],
     select {
       width: 100%;
       padding: 14px 16px;
@@ -189,6 +207,7 @@
     }
 
     input[type="text"]:focus,
+    input[type="tel"]:focus,
     select:focus {
       border-color: var(--gold-accent);
       background: rgba(255, 255, 255, 0.15);
@@ -200,6 +219,23 @@
       font-size: 12px;
       color: rgba(255, 255, 255, 0.55);
       margin-top: 6px;
+    }
+
+    /* 動態顯示/隱藏贊助細節欄位 */
+    #sponsorshipDetailsGroup {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .btn-submit {
@@ -317,15 +353,25 @@
 
   <div class="container">
     <div class="header">
-      <h1>太陽帝國 - 115年</h1>
+      <h1> 115年太陽帝國住戶自辦</h1>
       <h2>中秋晚會線上報名</h2>
-      <p>🌕 點擊 3D 月亮可觸發金色光脈衝與中秋許願祝福 🥮</p>
+      <p>🌕 點擊 3D 月亮看中秋許願祝福 🥮</p>
     </div>
 
+    <!-- 活動資訊卡片 -->
     <div class="info-card">
-      📅 <strong>活動日期：</strong>9/19 (六) 18:00~21:00<br>
-      📍 <strong>活動地點：</strong>花園前廣場<br>
-      🍡 <strong>精彩內容：</strong>油飯/米粉/串烤/Pizza、啤酒比賽、中秋摸彩！
+      <div class="info-section">
+        <strong>🍡 豐盛美食歡樂同樂</strong>
+        <p>提供油飯、米粉、串烤、Pizza 等豐盛美食，並安排剝柚子、喝啤酒比賽及中秋摸彩活動，歡迎大家一起來同樂！</p>
+      </div>
+      <div class="info-section">
+        <strong>🍱 住戶美食一起分享</strong>
+        <p>歡迎大家攜帶各式美食共襄盛舉！無論是炸雞、Pizza、柚子、月餅、飲料或餅乾等，都歡迎帶來與鄰居分享，吃美食、聊聊天，歡度中秋佳節。</p>
+      </div>
+      <div class="info-section">
+        <strong>🤝 住戶共同自行舉辦，歡迎熱心贊助</strong>
+        <p>本次中秋晚會由住戶共同自行舉辦，誠摯邀請大家一起支持。無論是活動經費或摸彩禮品，皆歡迎熱情贊助，讓今年的中秋晚會更加豐富熱鬧！</p>
+      </div>
     </div>
 
     <!-- 隱藏 iframe -->
@@ -335,15 +381,31 @@
     <!-- ⚠️ 請將 action 替換為您的 Google 表單 URL -->
     <form id="signupForm" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSe6VnUMoOg0-ey329GbyVsvrovpkcsL28Cu5cF1J0T9DkBqDQ/formResponse" method="POST" target="hidden_iframe" onsubmit="return handleFormSubmit();">
       
+      <!-- 1. 戶號 -->
       <div class="form-group">
         <label for="household">1. 戶號 <span>*</span></label>
         <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="text" id="household" name="entry.1330276673" placeholder="例如：B3-36F" required>
-        <div class="hint">請輸入您的棟別與樓層（例如：B3-36F）</div>
+        <input type="text" id="household" name="entry.473574569" placeholder="例如：B3-36F" required>
+        <div class="hint">請輸入您的棟別與樓層（例如：A1-12F）</div>
       </div>
 
+      <!-- 2. 姓名 -->
       <div class="form-group">
-        <label for="peopleCount">2. 參加人數 <span>*</span></label>
+        <label for="userName">2. 姓名 <span>*</span></label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <input type="text" id="userName" name="entry.1330276673" placeholder="請輸入聯絡人姓名" required>
+      </div>
+
+      <!-- 3. 電話 -->
+      <div class="form-group">
+        <label for="userPhone">3. 電話 <span>*</span></label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <input type="tel" id="userPhone" name="entry.711885050" placeholder="例如：0912345678" required>
+      </div>
+
+      <!-- 4. 參加人數 -->
+      <div class="form-group">
+        <label for="peopleCount">4. 參加人數 <span>*</span></label>
         <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
         <div class="select-wrapper">
           <select id="peopleCount" name="entry.1798518669" required>
@@ -360,6 +422,28 @@
           </select>
         </div>
         <div class="hint">每戶報名人數上限最多為 9 位</div>
+      </div>
+
+      <!-- 5. 有否贊助活動經費或摸彩禮品 -->
+      <div class="form-group">
+        <label for="sponsorship">5. 有否贊助活動經費或摸彩禮品</label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <div class="select-wrapper">
+          <select id="sponsorship" name="entry.1290141302" onchange="toggleSponsorshipDetails()">
+            <option value="否" selected>否</option>
+            <option value="贊助活動經費">贊助活動經費</option>
+            <option value="贊助摸彩禮品">贊助摸彩禮品</option>
+            <option value="贊助活動經費及摸彩禮品">贊助活動經費及摸彩禮品</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 6. 贊助內容說明（動態顯示） -->
+      <div class="form-group" id="sponsorshipDetailsGroup">
+        <label for="sponsorshipDetails">6. 贊助內容說明 <span>*</span></label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <input type="text" id="sponsorshipDetails" name="entry.120037457" placeholder="請填寫贊助金額、品項或數量（例如：現金 2,000 元 或 高級禮盒 2 份）">
+        <div class="hint">感謝您的熱心支持！管理委員會將另行致謝與聯繫登記</div>
       </div>
 
       <button type="submit" class="btn-submit">確認報名 🥮</button>
@@ -384,13 +468,13 @@
     let shockwaveActive = false;
     let shockwaveScale = 1;
 
-    // 點擊月亮出現的中秋祝福句庫
+    // 點擊月球出現的中秋祝福句庫
     const blessings = [
       "🌕 花好月圓 人團圓！",
       "🥮 預祝中秋大吉 大利！",
       "✨ 太陽帝國 幸福連連！",
       "🐇 玉兔迎春 月圓心舒！",
-      "🎉 期待 9/19 摸彩中大獎！",
+      "🎉 期待晚會摸彩中大獎！",
       "🍻 晚會歡聚 快樂無限！",
       "🏮 歲月靜好 中秋安康！"
     ];
@@ -571,14 +655,32 @@
 
     init3DMoon();
 
+    // 控制贊助欄位動態顯隱
+    function toggleSponsorshipDetails() {
+      const val = document.getElementById('sponsorship').value;
+      const detailsGroup = document.getElementById('sponsorshipDetailsGroup');
+      const detailsInput = document.getElementById('sponsorshipDetails');
+
+      if (val !== '否' && val !== '') {
+        detailsGroup.style.display = 'block';
+        detailsInput.required = true;
+      } else {
+        detailsGroup.style.display = 'none';
+        detailsInput.required = false;
+        detailsInput.value = '';
+      }
+    }
+
     // 表單提交邏輯
     let submitted = false;
 
     function handleFormSubmit() {
       const household = document.getElementById('household').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const userPhone = document.getElementById('userPhone').value.trim();
       const peopleCount = document.getElementById('peopleCount').value;
 
-      if (!household || !peopleCount) {
+      if (!household || !userName || !userPhone || !peopleCount) {
         return false;
       }
 
@@ -588,12 +690,13 @@
 
     function showCustomModal() {
       const household = document.getElementById('household').value;
+      const userName = document.getElementById('userName').value;
       const peopleCount = document.getElementById('peopleCount').value;
       
       document.getElementById('modalText').innerHTML = 
-        `住戶 <strong>${household}</strong> 您好！<br>` +
+        `<strong>${userName}</strong>（${household}）您好！<br>` +
         `已成功登記 <strong>${peopleCount}</strong> 位參加人數。<br><br>` +
-        `祝您中秋佳節快樂，9/19 期待與您同樂！`;
+        `祝您中秋佳節快樂，期待與您同樂！`;
 
       document.getElementById('successModal').classList.add('active');
     }
@@ -601,6 +704,7 @@
     function closeCustomModal() {
       document.getElementById('successModal').classList.remove('active');
       document.getElementById('signupForm').reset();
+      toggleSponsorshipDetails();
       submitted = false;
     }
   </script>
