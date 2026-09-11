@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>太陽帝國 - 115年中秋晚會線上報名</title>
+  <!-- 導入 Three.js 3D 引擎與 OrbitControls 軌道控制器 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --gold-accent: #ffd700;
+      --text-gold: #ffe082;
+      --card-bg: rgba(10, 18, 42, 0.75);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    body {
+      background-color: #030712;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 3D Canvas 背景容器 */
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: auto; /* 允許用戶用滑鼠拖拽旋轉 3D 月球 */
+    }
+
+    /* 報名卡片表單 */
+    .container {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8),
+                  0 0 40px rgba(255, 215, 0, 0.25);
+      width: 100%;
+      max-width: 460px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px 20px 15px;
+    }
+
+    .header h1 {
+      font-size: 26px;
+      color: var(--gold-accent);
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+
+    .header h2 {
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 8px;
+    }
+
+    /* 活動資訊卡片 */
+    .info-card {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 20px 0 20px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .info-card strong {
+      color: var(--text-gold);
+    }
+
+    form {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-gold);
+      font-size: 15px;
+    }
+
+    label span {
+      color: #ff6b6b;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 215, 0, 0.35);
+      border-radius: 12px;
+      font-size: 16px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--gold-accent);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+      outline: none;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      margin-top: 6px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+      color: #030712;
+      border: none;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(241, 196, 15, 0.6);
+      background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+      color: #fff;
+    }
+
+    /* 月亮風格 Modal 彈跳框 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: rgba(15, 28, 63, 0.95);
+      padding: 32px 24px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 380px;
+      width: 85%;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.4);
+      transform: scale(0.85);
+      transition: transform 0.3s ease;
+      border: 1.5px solid var(--gold-accent);
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-icon {
+      font-size: 55px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 12px rgba(255,224,130,0.9));
+    }
+
+    .modal-title {
+      font-size: 22px;
+      color: var(--gold-accent);
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .modal-desc {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .modal-desc strong {
+      color: var(--gold-accent);
+    }
+
+    .modal-btn {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      color: #030712;
+      border: none;
+      padding: 12px 35px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+      transition: background 0.3s;
+    }
+
+    .modal-btn:hover {
+      background: var(--gold-accent);
+    }
+
+    #hidden_iframe {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D 月球背景 WebGL Canvas -->
+  <div id="canvas-container"></div>
+
+  <div class="container">
+    <div class="header">
+      <h1>太陽帝國 - 115年</h1>
+      <h2>中秋晚會線上報名</h2>
+      <p>🌕 花好月圓人團圓，可旋轉背景 3D 月球 🏮</p>
+    </div>
+
+    <div class="info-card">
+      📅 <strong>活動日期：</strong>9/19 (六) 18:00~21:00<br>
+      📍 <strong>活動地點：</strong>花園前廣場<br>
+      🍡 <strong>精彩內容：</strong>油飯/米粉/串烤/Pizza、啤酒比賽、中秋摸彩！
+    </div>
+
+    <!-- 隱藏 iframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" onload="if(submitted) { showCustomModal(); }"></iframe>
+
+    <!-- 報名表單 -->
+    <!-- ⚠️ 請將 action 替換為您的 Google 表單 URL -->
+    <form id="signupForm" action="https://docs.google.com/forms/u/0/d/e/YOUR_FORM_ID/formResponse" method="POST" target="hidden_iframe" onsubmit="return handleFormSubmit();">
+      
+      <div class="form-group">
+        <label for="household">1. 戶號 <span>*</span></label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <input type="text" id="household" name="entry.111111111" placeholder="例如：B3-36F" required>
+        <div class="hint">請輸入您的棟別與樓層（例如：A1-12F）</div>
+      </div>
+
+      <div class="form-group">
+        <label for="peopleCount">2. 參加人數 <span>*</span></label>
+        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
+        <input type="number" id="peopleCount" name="entry.222222222" min="1" max="20" placeholder="請輸入參加總人數" required>
+        <div class="hint">以方便管委會統計晚會食材數量</div>
+      </div>
+
+      <button type="submit" class="btn-submit">確認報名 🥮</button>
+    </form>
+  </div>
+
+  <!-- 彈跳視窗 Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-box">
+      <div class="modal-icon">🌕</div>
+      <div class="modal-title">報名完成！</div>
+      <div class="modal-desc" id="modalText">
+        您的報名資訊已成功登記！
+      </div>
+      <button class="modal-btn" onclick="closeCustomModal()">好的，期待晚會</button>
+    </div>
+  </div>
+
+  <!-- Three.js 3D 月亮製作邏輯 -->
+  <script>
+    let scene, camera, renderer, moon, stars;
+
+    function init3DMoon() {
+      const container = document.getElementById('canvas-container');
+
+      // 1. 建立場景 (Scene)
+      scene = new THREE.Scene();
+
+      // 2. 建立相機 (Camera)
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 7);
+
+      // 3. 建立渲染器 (Renderer)
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // 4. 建立 3D 月球幾何體與紋理貼圖
+      const geometry = new THREE.SphereGeometry(1.8, 64, 64);
+
+      // 使用 NASA 官方授權高清月球紋理 Map
+      const textureLoader = new THREE.TextureLoader();
+      const moonTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg');
+
+      const material = new THREE.MeshStandardMaterial({
+        map: moonTexture,
+        roughness: 0.8,
+        metalness: 0.1,
+        color: 0xffe89e // 賦予月亮金黃色的節慶溫暖光澤
+      });
+
+      moon = new THREE.Mesh(geometry, material);
+      // 將月球向右上偏移，避免完全被中央表單遮擋
+      moon.position.set(2.2, 1.2, -1);
+      scene.add(moon);
+
+      // 5. 燈光系統 (Ambient & Directional Light)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+      scene.add(ambientLight);
+
+      const moonLight = new THREE.DirectionalLight(0xfff5cc, 1.5);
+      moonLight.position.set(5, 3, 5);
+      scene.add(moonLight);
+
+      // 6. 星空背景粒子 (Particle Stars)
+      const starsGeometry = new THREE.BufferGeometry();
+      const starsCount = 800;
+      const starPositions = new Float32Array(starsCount * 3);
+
+      for (let i = 0; i < starsCount * 3; i++) {
+        starPositions[i] = (Math.random() - 0.5) * 20;
+      }
+
+      starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      const starsMaterial = new THREE.PointsMaterial({
+        color: 0xffd700,
+        size: 0.03,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      stars = new THREE.Points(starsGeometry, starsMaterial);
+      scene.add(stars);
+
+      // 7. 軌道控制器 (可用滑鼠/手指旋轉)
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enableZoom = false; // 停用縮放以防干擾網頁滑動
+
+      // 8. 視窗 Resizing 響應
+      window.addEventListener('resize', onWindowResize);
+
+      // 9. 開始渲染動畫循環
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // 月球自轉
+      if (moon) {
+        moon.rotation.y += 0.002;
+      }
+
+      // 星空微旋轉
+      if (stars) {
+        stars.rotation.y += 0.0005;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // 手機板螢幕時調整月球位置
+      if (window.innerWidth < 768) {
+        moon.position.set(0, 1.8, -2);
+      } else {
+        moon.position.set(2.2, 1.2, -1);
+      }
+    }
+
+    // 初始化 3D 場景
+    init3DMoon();
+
+    // 表單提交處理邏輯
+    let submitted = false;
+
+    function handleFormSubmit() {
+      const household = document.getElementById('household').value.trim();
+      const peopleCount = document.getElementById('peopleCount').value;
+
+      if (!household || !peopleCount) {
+        return false;
+      }
+
+      submitted = true;
+      return true;
+    }
+
+    function showCustomModal() {
+      const household = document.getElementById('household').value;
+      const peopleCount = document.getElementById('peopleCount').value;
+      
+      document.getElementById('modalText').innerHTML = 
+        `住戶 <strong>${household}</strong> 您好！<br>` +
+        `已成功登記 <strong>${peopleCount}</strong> 位參加人數。<br><br>` +
+        `祝您中秋佳節快樂，9/19 期待與您同樂！`;
+
+      document.getElementById('successModal').classList.add('active');
+    }
+
+    function closeCustomModal() {
+      document.getElementById('successModal').classList.remove('active');
+      document.getElementById('signupForm').reset();
+      submitted = false;
+    }
+  </script>
+</body>
+</html>
