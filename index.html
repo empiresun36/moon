@@ -166,6 +166,22 @@
             color: var(--primary);
             margin-bottom: 20px;
         }
+        /* 新增：單行文字輸入框樣式 */
+.text-input {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
     </style>
 </head>
 <body>
@@ -183,7 +199,12 @@
               method="POST" 
               target="hidden_iframe" 
               onsubmit="submitted=true;">
-
+<!-- 新增：戶號欄位 -->
+<div class="form-group">
+    <label class="question-title">戶號（例：B3-36F）：</label>
+    <!-- ⚠️ 請將 entry.0000000 替換為 Google Form 對應的戶號欄位 ID -->
+    <input type="text" name="entry.507088190" class="text-input" placeholder="例：B3-36F" required>
+</div>
             <!-- 第 1 題：整體流程滿意度 -->
             <div class="form-group">
                 <label class="question-title">1. 您對本次晚會活動的整體流程安排是否滿意？</label>
