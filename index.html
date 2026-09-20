@@ -1,705 +1,246 @@
-<!DOCTYPE html>e
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>115年太陽帝國 - 住戶自辦中秋晚會線上報名</title>
-  <!-- 導入 Three.js 3D 引擎與 OrbitControls 軌道控制器 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太陽帝國晚會活動 - 滿意度調查</title>
+    <style>
+        :root {
+            --primary: #d4af37;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #ffffff;
+            --text-sub: #b0b0b0;
+            --border: #333333;
+        }
 
-  <style>
-    :root {
-      --gold-accent: #ffd700;
-      --text-gold: #ffe082;
-      --card-bg: rgba(10, 18, 42, 0.78);
-    }
+        body {
+            font-family: 'Helvetica Neue', Arial, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
-    }
+        .survey-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px 25px;
+            box-sizing: border-box;
+        }
 
-    body {
-      background-color: #030712;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: #fff;
-      overflow-x: hidden;
-      position: relative;
-    }
+        h1 {
+            color: var(--primary);
+            font-size: 24px;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
 
-    /* 3D Canvas 背景容器 */
-    #canvas-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-    }
+        .intro {
+            color: var(--text-sub);
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-    /* 點擊月球出現的許願/節慶祝福浮動文字 */
-    .moon-blessing {
-      position: fixed;
-      color: #fff7d6;
-      font-weight: bold;
-      font-size: 18px;
-      pointer-events: none;
-      text-shadow: 0 0 10px #ffd700, 0 0 20px #ff9800;
-      animation: floatUp 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-      z-index: 999;
-      white-space: nowrap;
-    }
+        .form-group {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
 
-    @keyframes floatUp {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(0.6);
-      }
-      50% {
-        opacity: 1;
-        transform: translate(-50%, -100%) scale(1.2);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -150%) scale(1);
-      }
-    }
+        .form-group:last-of-type {
+            border-bottom: none;
+        }
 
-    /* 報名卡片表單 */
-    .container {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8),
-                  0 0 40px rgba(255, 215, 0, 0.25);
-      width: 100%;
-      max-width: 480px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      position: relative;
-      z-index: 1;
-      margin: 20px 0;
-    }
+        label.question-title {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
 
-    .header {
-      text-align: center;
-      padding: 30px 20px 15px;
-    }
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    .header h1 {
-      font-size: 26px;
-      color: var(--gold-accent);
-      letter-spacing: 2px;
-      text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-    }
+        .option-label {
+            display: flex;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 15px;
+        }
 
-    .header h2 {
-      font-size: 20px;
-      color: #ffffff;
-      font-weight: 400;
-      margin-top: 4px;
-    }
+        .option-label:hover {
+            background: #333333;
+        }
 
-    .header p {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.85);
-      margin-top: 8px;
-    }
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
+            margin-right: 12px;
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
 
-    /* 活動資訊卡片 */
-    .info-card {
-      background: rgba(255, 215, 0, 0.08);
-      border: 1px solid rgba(255, 215, 0, 0.25);
-      border-radius: 12px;
-      padding: 16px 18px;
-      margin: 10px 20px 0 20px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            padding: 12px;
+            box-sizing: border-box;
+            font-size: 14px;
+            resize: vertical;
+        }
 
-/* 新增：讚助文字高亮效果 */
-.info-card .highlight {
-  color: #ff4d4d; /* 鮮艷的粉紅色，或可改用 #ff4d4d (紅)、#ffc107 (亮黃) */
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
-font-size: 16px;
-  background: rgba(255, 51, 102, 0.15); /* 淡淡的底色背景 */
-  padding: 2px 6px;
-  border-radius: 4px;
-}
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
 
-    .info-section {
-      margin-bottom: 12px;
-    }
-
-    .info-section:last-child {
-      margin-bottom: 0;
-    }
-
-    .info-card strong {
-      color: var(--text-gold);
-      font-size: 15px;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .info-card p {
-      color: rgba(255, 255, 255, 0.9);
-      margin: 0;
-    }
-
-    form {
-      padding: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text-gold);
-      font-size: 15px;
-    }
-
-    label span {
-      color: #ff6b6b;
-    }
-
-    input[type="text"],
-    input[type="tel"],
-    select {
-      width: 100%;
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1.5px solid rgba(255, 215, 0, 0.35);
-      border-radius: 12px;
-      font-size: 16px;
-      color: #fff;
-      transition: all 0.3s ease;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-
-    /* 下拉選單自訂箭頭 */
-    .select-wrapper {
-      position: relative;
-    }
-
-    .select-wrapper::after {
-      content: '▼';
-      font-size: 12px;
-      color: var(--gold-accent);
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    select option {
-      background-color: #0d1630;
-      color: #fff;
-    }
-
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    input[type="text"]:focus,
-    input[type="tel"]:focus,
-    select:focus {
-      border-color: var(--gold-accent);
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-      outline: none;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.55);
-      margin-top: 6px;
-    }
-
-    /* 動態顯示/隱藏贊助細節欄位 */
-    #sponsorshipDetailsGroup {
-      display: none;
-      animation: fadeIn 0.3s ease-in-out forwards;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
-      color: #030712;
-      border: none;
-      padding: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
-      transition: all 0.3s ease;
-      letter-spacing: 1px;
-    }
-
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(241, 196, 15, 0.6);
-      background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
-      color: #fff;
-    }
-
-    /* 月亮風格 Modal 彈跳框 */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(3, 7, 18, 0.85);
-      backdrop-filter: blur(10px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-box {
-      background: rgba(15, 28, 63, 0.95);
-      padding: 32px 24px;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 380px;
-      width: 85%;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.4);
-      transform: scale(0.85);
-      transition: transform 0.3s ease;
-      border: 1.5px solid var(--gold-accent);
-    }
-
-    .modal-overlay.active .modal-box {
-      transform: scale(1);
-    }
-
-    .modal-icon {
-      font-size: 55px;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 0 12px rgba(255,224,130,0.9));
-    }
-
-    .modal-title {
-      font-size: 22px;
-      color: var(--gold-accent);
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-
-    .modal-desc {
-      font-size: 15px;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-
-    .modal-desc strong {
-      color: var(--gold-accent);
-    }
-
-    .modal-btn {
-      background: linear-gradient(135deg, #f1c40f, #f39c12);
-      color: #030712;
-      border: none;
-      padding: 12px 35px;
-      border-radius: 25px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
-      transition: background 0.3s;
-    }
-
-    .modal-btn:hover {
-      background: var(--gold-accent);
-    }
-
-    #hidden_iframe {
-      display: none;
-    }
-  </style>
+        .submit-btn:hover {
+            background-color: #f3cf55;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        }
+    </style>
 </head>
 <body>
 
-  <!-- 3D 月球背景 WebGL Canvas -->
-  <div id="canvas-container"></div>
+<div class="survey-card">
+    <h1>太陽帝國晚會活動滿意度調查</h1>
+    <p class="intro">親愛的住戶/貴賓您好，感謝您參與本次晚會！請填寫以下問卷，協助我們做得更好。</p>
 
-  <div class="container">
-    <div class="header">
-      <h1> 115年太陽帝國住戶自辦</h1>
-      <h2>🌕 中秋晚會線上報名🥮</h2>
-    </div>
+    <!-- ⚠️ 請將 action 替換為您的 Google Form 提交網址 (formResponse) -->
+    <form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
 
-    <!-- 活動資訊卡片 -->
-    <div class="info-card">
-
-      <div class="info-section">
-       <strong>📅 時間： 9/19 (六) 18:00 ~ 21:00</strong>
-       <strong>📍 地點： 花園前廣場</strong>
- 
-
-      </div>
-      <div class="info-section">
-       <strong>📋 活動內容：</strong>
-      </div>
-      <div class="info-section" style="padding-left: 20px;">
-        <strong>🍡 豐盛美食歡樂同樂</strong>
-        <p>提供油飯、米粉、串烤、Pizza 等豐盛美食，並安排剝柚子、喝啤酒比賽及中秋摸彩活動，歡迎大家一起來同樂！</p>
-      </div>
-      <div class="info-section" style="padding-left: 20px;">
-        <strong>🍱【鄰居美食派對】 - 住戶美食共享</strong>
-        <p>歡迎大家隨手帶點喜歡的美食（如炸雞、Pizza、月餅、柚子、手作料理或零食飲料）來與鄰居分享，一起聊天過中秋！</p>
-        <p><span class="highlight">【溫馨提醒】 自由攜帶，毫無負擔！就算只帶一顆愛吃的心來湊熱鬧也完全沒問題！</span></p>
-      </div>
-      <div class="info-section" style="padding-left: 20px;">
-        <strong>🤝 住戶共同自行舉辦，歡迎熱情參與、隨喜贊助</strong>
-        <p>本次中秋晚會由住戶共同自行舉辦，誠摯邀請大家一起支持。無論是<span class="highlight">活動經費</span>或<span class="highlight">摸彩禮品</span>，皆歡迎<span class="highlight">熱情贊助</span>，讓今年的中秋晚會更加豐富熱鬧！</p>
-      </div>
-      <div class="info-section" style="padding-left: 20px;">
-        <strong><span class="highlight"> 👉【環保小尖兵】活動現場，請記得自帶「環保碗筷、杯子」！！</span></strong>
-      </div>
-    </div>
-
-    <!-- 隱藏 iframe -->
-    <iframe name="hidden_iframe" id="hidden_iframe" onload="if(submitted) { showCustomModal(); }"></iframe>
-
-    <!-- 報名表單 -->
-    <!-- ⚠️ 請將 action 替換為您的 Google 表單 URL -->
-    <form id="signupForm" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSe6VnUMoOg0-ey329GbyVsvrovpkcsL28Cu5cF1J0T9DkBqDQ/formResponse" method="POST" target="hidden_iframe" onsubmit="return handleFormSubmit();">
-      
-      <!-- 1. 戶號 -->
-      <div class="form-group">
-        <label for="household">1. 戶號 <span>*</span></label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="text" id="household" name="entry.473574569" placeholder="例如：B3-36F" required>
-        <div class="hint">請輸入您的棟別與樓層（例如：A1-12F）</div>
-      </div>
-
-      <!-- 2. 姓名 -->
-      <div class="form-group">
-        <label for="userName">2. 姓名 <span>*</span></label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <input type="text" id="userName" name="entry.1330276673" placeholder="請輸入聯絡人姓名" required>
-      </div>
-
-      <!-- 3. 參加人數 -->
-      <div class="form-group">
-        <label for="peopleCount">3. 參加人數 <span>*</span></label>
-        <!-- ⚠️ 請將 name 替換為您的 entry.ID -->
-        <div class="select-wrapper">
-          <select id="peopleCount" name="entry.1798518669" required>
-            <option value="" disabled selected>請選擇參加人數</option>
-            <option value="1">1 位</option>
-            <option value="2">2 位</option>
-            <option value="3">3 位</option>
-            <option value="4">4 位</option>
-            <option value="5">5 位</option>
-            <option value="6">6 位</option>
-            <option value="7">7 位</option>
-            <option value="8">8 位</option>
-            <option value="9">9 位</option>
-          </select>
+        <!-- 第 1 題：整體流程滿意度 -->
+        <div class="form-group">
+            <label class="question-title">1. 您對本次晚會活動的整體流程安排是否滿意？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="非常滿意" required> 非常滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="滿意"> 滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="普通"> 普通
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="不滿意"> 不滿意
+                </label>
+            </div>
         </div>
-        <div class="hint">每戶報名人數上限最多為 9 位</div>
-      </div>
 
-      <button type="submit" class="btn-submit">確認報名 🥮</button>
+        <!-- 第 2 題：餐點滿意度 -->
+        <div class="form-group">
+            <label class="question-title">2. 您對晚會現場提供的餐點品質與安排滿意度如何？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="非常滿意" required> 非常滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="滿意"> 滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="普通"> 普通
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="不滿意"> 不滿意
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 3 題：最喜歡的節目項目（可複選） -->
+        <div class="form-group">
+            <label class="question-title">3. 本次晚會中，您最喜歡哪些節目/活動？（可複選）</label>
+            <div class="options-group">
+                <!-- ⚠️ 複選題所有選項的 name 設定成同一個 entry ID 即可 -->
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="樂器演奏"> 1. 樂器演奏
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="唱歌"> 2. 唱歌
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="跳舞"> 3. 跳舞
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="遊戲活動"> 4. 遊戲活動
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="餐點"> 5. 餐點
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="童玩機器"> 6. 童玩機器
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="摸彩"> 7. 摸彩
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 4 題：未來參加意願 -->
+        <div class="form-group">
+            <label class="question-title">4. 未來若再次舉辦類似晚會活動，您是否有意願參加？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="非常有意願" required> 非常有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="有意願"> 有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="視時間而定"> 視時間而定
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="無意願"> 無意願
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 5 題：文字意見 -->
+        <div class="form-group">
+            <label class="question-title">5. 其他寶貴建議或改進意見（選填）：</label>
+            <textarea name="entry.1000005" placeholder="歡迎留下您對活動的建議，幫助我們下次做得更好..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">送出滿意度問卷</button>
     </form>
-  </div>
+</div>
 
-  <!-- 彈跳視窗 Modal -->
-  <div class="modal-overlay" id="successModal">
-    <div class="modal-box">
-      <div class="modal-icon">🌕</div>
-      <div class="modal-title">報名完成！</div>
-      <div class="modal-desc" id="modalText">
-        您的報名資訊已成功登記！
-      </div>
-      <button class="modal-btn" onclick="closeCustomModal()">好的，期待晚會</button>
-    </div>
-  </div>
-
-  <!-- Three.js 3D 月亮與互動點擊邏輯 -->
-  <script>
-    let scene, camera, renderer, moon, stars, shockwave, raycaster, mouse;
-    let shockwaveActive = false;
-    let shockwaveScale = 1;
-
-    // 點擊月球出現的中秋祝福句庫
-    const blessings = [
-      "🌕 花好月圓 人團圓！",
-      "🥮 預祝中秋大吉 大利！",
-      "✨ 太陽帝國 幸福連連！",
-      "🐇 玉兔迎春 月圓心舒！",
-      "🎉 期待晚會摸彩中大獎！",
-      "🍻 晚會歡聚 快樂無限！",
-      "🏮 歲月靜好 中秋安康！"
-    ];
-
-    function init3DMoon() {
-      const container = document.getElementById('canvas-container');
-
-      // 1. 建立場景
-      scene = new THREE.Scene();
-
-      // 2. 建立相機
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 0, 7);
-
-      // 3. 建立渲染器
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      container.appendChild(renderer.domElement);
-
-      // 4. Raycaster 光線投射器（用於檢測點擊 3D 月球）
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-
-      // 5. 建立 3D 月球
-      const geometry = new THREE.SphereGeometry(1.8, 64, 64);
-      const textureLoader = new THREE.TextureLoader();
-      const moonTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg');
-
-      const material = new THREE.MeshStandardMaterial({
-        map: moonTexture,
-        roughness: 0.8,
-        metalness: 0.1,
-        color: 0xffe89e
-      });
-
-      moon = new THREE.Mesh(geometry, material);
-      moon.position.set(2.2, 1.2, -1);
-      scene.add(moon);
-
-      // 6. 點擊產生的金黃光脈衝圈 (Shockwave Ring)
-      const shockGeometry = new THREE.RingGeometry(1.8, 1.95, 64);
-      const shockMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffd700,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0
-      });
-      shockwave = new THREE.Mesh(shockGeometry, shockMaterial);
-      shockwave.position.copy(moon.position);
-      scene.add(shockwave);
-
-      // 7. 燈光系統
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
-      scene.add(ambientLight);
-
-      const moonLight = new THREE.DirectionalLight(0xfff5cc, 1.5);
-      moonLight.position.set(5, 3, 5);
-      scene.add(moonLight);
-
-      // 8. 星空背景粒子
-      const starsGeometry = new THREE.BufferGeometry();
-      const starsCount = 800;
-      const starPositions = new Float32Array(starsCount * 3);
-
-      for (let i = 0; i < starsCount * 3; i++) {
-        starPositions[i] = (Math.random() - 0.5) * 20;
-      }
-
-      starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-      const starsMaterial = new THREE.PointsMaterial({
-        color: 0xffd700,
-        size: 0.03,
-        transparent: true,
-        opacity: 0.8
-      });
-
-      stars = new THREE.Points(starsGeometry, starsMaterial);
-      scene.add(stars);
-
-      // 9. 控制器
-      const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.enableZoom = false;
-
-      // 10. 事件監聽 (點擊 & 響應式尺寸)
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('pointerdown', onDocumentPointerDown);
-
-      animate();
-    }
-
-    // 觸發點擊月球效果
-    function onDocumentPointerDown(event) {
-      // 避開表單區域的點擊，確保專注於 Canvas 與月球
-      if (event.target.closest('.container') || event.target.closest('.modal-box')) return;
-
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObject(moon);
-
-      if (intersects.length > 0) {
-        // 1. 觸發月球心跳縮放彈跳
-        moon.scale.set(1.18, 1.18, 1.18);
-        
-        // 2. 啟動光波脈衝
-        shockwave.position.copy(moon.position);
-        shockwave.rotation.x = Math.random() * Math.PI;
-        shockwave.rotation.y = Math.random() * Math.PI;
-        shockwaveScale = 1;
-        shockwave.scale.set(1, 1, 1);
-        shockwave.material.opacity = 0.9;
-        shockwaveActive = true;
-
-        // 3. 產生隨機許願/祝福飄浮文字
-        createBlessingText(event.clientX, event.clientY);
-      }
-    }
-
-    function createBlessingText(x, y) {
-      const el = document.createElement('div');
-      el.className = 'moon-blessing';
-      const randomText = blessings[Math.floor(Math.random() * blessings.length)];
-      el.innerText = randomText;
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
-
-      document.body.appendChild(el);
-
-      setTimeout(() => {
-        el.remove();
-      }, 1800);
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      // 月球自轉
-      if (moon) {
-        moon.rotation.y += 0.002;
-        // 月球平滑恢復原尺寸
-        moon.scale.lerp(new THREE.Vector3(1, 1, 1), 0.08);
-      }
-
-      // 金色光波脈衝擴散動畫
-      if (shockwaveActive && shockwave) {
-        shockwaveScale += 0.04;
-        shockwave.scale.set(shockwaveScale, shockwaveScale, shockwaveScale);
-        shockwave.material.opacity -= 0.025;
-
-        if (shockwave.material.opacity <= 0) {
-          shockwaveActive = false;
-        }
-      }
-
-      // 星空旋轉
-      if (stars) {
-        stars.rotation.y += 0.0005;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      if (window.innerWidth < 768) {
-        moon.position.set(0, 1.8, -2);
-      } else {
-        moon.position.set(2.2, 1.2, -1);
-      }
-    }
-
-    init3DMoon();
-
-    // 控制贊助欄位動態顯隱
-    function toggleSponsorshipDetails() {
-      const val = document.getElementById('sponsorship').value;
-      const detailsGroup = document.getElementById('sponsorshipDetailsGroup');
-      const detailsInput = document.getElementById('sponsorshipDetails');
-
-      if (val !== '否' && val !== '') {
-        detailsGroup.style.display = 'block';
-        detailsInput.required = true;
-      } else {
-        detailsGroup.style.display = 'none';
-        detailsInput.required = false;
-        detailsInput.value = '';
-      }
-    }
-
-    // 表單提交邏輯
-    let submitted = false;
-
-    function handleFormSubmit() {
-      const household = document.getElementById('household').value.trim();
-      const userName = document.getElementById('userName').value.trim();
-      const peopleCount = document.getElementById('peopleCount').value;
-
-      if (!household || !userName || !peopleCount) {
-        return false;
-      }
-
-      submitted = true;
-      return true;
-    }
-
-    function showCustomModal() {
-      const household = document.getElementById('household').value;
-      const userName = document.getElementById('userName').value;
-      const peopleCount = document.getElementById('peopleCount').value;
-      
-      document.getElementById('modalText').innerHTML = 
-        `<strong>${userName}</strong>（${household}）您好！<br>` +
-        `已成功登記 <strong>${peopleCount}</strong> 位參加人數。<br><br>` +
-        `祝您中秋佳節快樂，期待與您同樂！`;
-
-      document.getElementById('successModal').classList.add('active');
-    }
-
-    function closeCustomModal() {
-      document.getElementById('successModal').classList.remove('active');
-      document.getElementById('signupForm').reset();
-      toggleSponsorshipDetails();
-      submitted = false;
-    }
-  </script>
 </body>
 </html>
