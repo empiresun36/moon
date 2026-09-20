@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太陽帝國晚會活動 - 滿意度調查表</title>
+    <style>
+        :root {
+            --primary-color: #d4af37; /* 太陽金色 */
+            --bg-color: #1a1a1a;       /* 暗夜深色系 */
+            --card-bg: #2a2a2a;
+            --text-color: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--primary-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+
+        p {
+            color: #ccc;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            margin: 20px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn:hover {
+            background-color: #f3cf55;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>太陽帝國晚會活動<br>滿意度調查問卷</h1>
+    <div class="divider"></div>
+    <p>
+        親愛的住戶／貴賓 您好：<br><br>
+        感謝您參加本次「太陽帝國」舉辦的晚會活動！<br>
+        為了讓我們未來的活動能提供更優質的體驗與服務，誠摯邀請您花費 1-2 分鐘時間填寫本問卷。您的寶貴意見將是我們進步的最大動力。
+    </p>
+
+    <!-- 請將下方 href 中的網址替換為您的 Google Form 填寫連結 -->
+    <a href="https://forms.gle/YOUR_GOOGLE_FORM_ID" target="_blank" class="btn">
+        前往填寫滿意度問卷
+    </a>
+
+    <div class="footer">
+        太陽帝國管理委員會 / 活動企劃團隊 敬上
+    </div>
+</div>
+
+</body>
+</html>
