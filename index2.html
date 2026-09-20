@@ -3,104 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>太陽帝國晚會活動 - 滿意度調查表</title>
+    <title>太陽帝國晚會活動 - 滿意度調查</title>
     <style>
         :root {
-            --primary-color: #d4af37; /* 太陽金色 */
-            --bg-color: #1a1a1a;       /* 暗夜深色系 */
-            --card-bg: #2a2a2a;
-            --text-color: #f5f5f5;
+            --primary: #d4af37;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #ffffff;
+            --text-sub: #b0b0b0;
+            --border: #333333;
         }
 
         body {
             font-family: 'Helvetica Neue', Arial, "Microsoft JhengHei", sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
 
-        .container {
+        .survey-card {
             background-color: var(--card-bg);
-            border: 1px solid var(--primary-color);
+            border: 1px solid var(--primary);
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
             max-width: 600px;
             width: 100%;
-            padding: 30px;
-            text-align: center;
+            padding: 30px 25px;
+            box-sizing: border-box;
         }
 
         h1 {
-            color: var(--primary-color);
+            color: var(--primary);
+            font-size: 24px;
+            text-align: center;
+            margin-top: 0;
             margin-bottom: 10px;
-            font-size: 26px;
         }
 
-        p {
-            color: #ccc;
-            font-size: 15px;
+        .intro {
+            color: var(--text-sub);
+            font-size: 14px;
             line-height: 1.6;
+            text-align: center;
             margin-bottom: 25px;
         }
 
-        .divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            margin: 20px 0;
+        .form-group {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
+        .form-group:last-of-type {
+            border-bottom: none;
+        }
+
+        label.question-title {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 15px;
+        }
+
+        .option-label:hover {
+            background: #333333;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            padding: 12px;
+            box-sizing: border-box;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
             color: #000;
             font-weight: bold;
             font-size: 16px;
-            padding: 14px 32px;
+            padding: 14px;
             border: none;
             border-radius: 30px;
-            text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+            margin-top: 10px;
         }
 
-        .btn:hover {
+        .submit-btn:hover {
             background-color: #f3cf55;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
-        }
-
-        .footer {
-            margin-top: 25px;
-            font-size: 12px;
-            color: #777;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>太陽帝國晚會活動<br>滿意度調查問卷</h1>
-    <div class="divider"></div>
-    <p>
-        親愛的住戶／貴賓 您好：<br><br>
-        感謝您參加本次「太陽帝國」舉辦的晚會活動！<br>
-        為了讓我們未來的活動能提供更優質的體驗與服務，誠摯邀請您花費 1-2 分鐘時間填寫本問卷。您的寶貴意見將是我們進步的最大動力。
-    </p>
+<div class="survey-card">
+    <h1>太陽帝國晚會活動滿意度調查</h1>
+    <p class="intro">親愛的住戶/貴賓您好，感謝您參與本次晚會！請填寫以下問卷，協助我們做得更好。</p>
 
-    <!-- 請將下方 href 中的網址替換為您的 Google Form 填寫連結 -->
-    <a href="https://forms.gle/YOUR_GOOGLE_FORM_ID" target="_blank" class="btn">
-        前往填寫滿意度問卷
-    </a>
+    <!-- ⚠️ 請將 action 替換為您的 Google Form 提交網址 (formResponse) -->
+    <form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
 
-    <div class="footer">
-        太陽帝國管理委員會 / 活動企劃團隊 敬上
-    </div>
+        <!-- 第 1 題：選擇題 -->
+        <div class="form-group">
+            <label class="question-title">1. 您對本次晚會活動整體流程安排是否滿意？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <!-- ⚠️ 替換 name="entry.XXXXXX" 為對應欄位 ID -->
+                    <input type="radio" name="entry.1000001" value="非常滿意" required> 非常滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="滿意"> 滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="普通"> 普通
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000001" value="不滿意"> 不滿意
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 2 題：選擇題 -->
+        <div class="form-group">
+            <label class="question-title">2. 您對晚會現場的餐點/節目表演滿意度如何？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="非常滿意" required> 非常滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="滿意"> 滿意
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="普通"> 普通
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000002" value="不滿意"> 不滿意
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 3 題：選擇題 -->
+        <div class="form-group">
+            <label class="question-title">3. 未來若再次舉辦類似晚會活動，您是否有意願參加？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000003" value="非常有意願" required> 非常有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000003" value="有意願"> 有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000003" value="視時間而定"> 視時間而定
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000003" value="無意願"> 無意願
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 4 題：文字意見 -->
+        <div class="form-group">
+            <label class="question-title">4. 其他寶貴建議或想對我們說的話（選填）：</label>
+            <textarea name="entry.1000004" placeholder="請在此輸入您的寶貴建議..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">送出滿意度問卷</button>
+    </form>
 </div>
 
 </body>
