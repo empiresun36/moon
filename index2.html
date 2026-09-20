@@ -90,7 +90,8 @@
             background: #333333;
         }
 
-        .option-label input[type="radio"] {
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
             margin-right: 12px;
             accent-color: var(--primary);
             width: 18px;
@@ -145,12 +146,11 @@
     <!-- ⚠️ 請將 action 替換為您的 Google Form 提交網址 (formResponse) -->
     <form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
 
-        <!-- 第 1 題：選擇題 -->
+        <!-- 第 1 題：整體流程滿意度 -->
         <div class="form-group">
-            <label class="question-title">1. 您對本次晚會活動整體流程安排是否滿意？</label>
+            <label class="question-title">1. 您對本次晚會活動的整體流程安排是否滿意？</label>
             <div class="options-group">
                 <label class="option-label">
-                    <!-- ⚠️ 替換 name="entry.XXXXXX" 為對應欄位 ID -->
                     <input type="radio" name="entry.1000001" value="非常滿意" required> 非常滿意
                 </label>
                 <label class="option-label">
@@ -165,9 +165,9 @@
             </div>
         </div>
 
-        <!-- 第 2 題：選擇題 -->
+        <!-- 第 2 題：餐點滿意度 -->
         <div class="form-group">
-            <label class="question-title">2. 您對晚會現場的餐點/節目表演滿意度如何？</label>
+            <label class="question-title">2. 您對晚會現場提供的餐點品質與安排滿意度如何？</label>
             <div class="options-group">
                 <label class="option-label">
                     <input type="radio" name="entry.1000002" value="非常滿意" required> 非常滿意
@@ -184,29 +184,58 @@
             </div>
         </div>
 
-        <!-- 第 3 題：選擇題 -->
+        <!-- 第 3 題：最喜歡的節目項目（可複選） -->
         <div class="form-group">
-            <label class="question-title">3. 未來若再次舉辦類似晚會活動，您是否有意願參加？</label>
+            <label class="question-title">3. 本次晚會中，您最喜歡哪些節目/活動？（可複選）</label>
             <div class="options-group">
+                <!-- ⚠️ 複選題所有選項的 name 設定成同一個 entry ID 即可 -->
                 <label class="option-label">
-                    <input type="radio" name="entry.1000003" value="非常有意願" required> 非常有意願
+                    <input type="checkbox" name="entry.1000003" value="樂器演奏"> 1. 樂器演奏
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="entry.1000003" value="有意願"> 有意願
+                    <input type="checkbox" name="entry.1000003" value="唱歌"> 2. 唱歌
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="entry.1000003" value="視時間而定"> 視時間而定
+                    <input type="checkbox" name="entry.1000003" value="跳舞"> 3. 跳舞
                 </label>
                 <label class="option-label">
-                    <input type="radio" name="entry.1000003" value="無意願"> 無意願
+                    <input type="checkbox" name="entry.1000003" value="遊戲活動"> 4. 遊戲活動
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="餐點"> 5. 餐點
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="童玩機器"> 6. 童玩機器
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="entry.1000003" value="摸彩"> 7. 摸彩
                 </label>
             </div>
         </div>
 
-        <!-- 第 4 題：文字意見 -->
+        <!-- 第 4 題：未來參加意願 -->
         <div class="form-group">
-            <label class="question-title">4. 其他寶貴建議或想對我們說的話（選填）：</label>
-            <textarea name="entry.1000004" placeholder="請在此輸入您的寶貴建議..."></textarea>
+            <label class="question-title">4. 未來若再次舉辦類似晚會活動，您是否有意願參加？</label>
+            <div class="options-group">
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="非常有意願" required> 非常有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="有意願"> 有意願
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="視時間而定"> 視時間而定
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="entry.1000004" value="無意願"> 無意願
+                </label>
+            </div>
+        </div>
+
+        <!-- 第 5 題：文字意見 -->
+        <div class="form-group">
+            <label class="question-title">5. 其他寶貴建議或改進意見（選填）：</label>
+            <textarea name="entry.1000005" placeholder="歡迎留下您對活動的建議，幫助我們下次做得更好..."></textarea>
         </div>
 
         <button type="submit" class="submit-btn">送出滿意度問卷</button>
